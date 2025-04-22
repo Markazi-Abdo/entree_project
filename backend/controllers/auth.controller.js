@@ -96,7 +96,8 @@ const logInUser = async function(req, res) {
         const isValid = validateLogInUser({ email, motPasse }, res)
         if (isValid) {
             const findUser = await User.findOne({ email });
-            if (!findUser) {
+            const compare = await findUser.validatePassword(motPasse);
+            if (!findUser || !compare) {
                 authLogger.error("Utilisateur non reconnue");
                 return res.status(404).json({ success:false, message:"Utilisateur non reconneu" });
             }

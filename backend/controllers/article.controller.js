@@ -5,20 +5,20 @@ import Article from "../model/produits.model.js";
 
 const createArticle = async function(req,res) {
     try {
-        const { nom, quantity } = req.body;
-        if (!nom || !quantity) {
+        const { nom, quantite } = req.body;
+        if (!nom || !quantite) {
             articleLogger.error("Les champs doivent etre remplis");
             return res.status(400).json({ success:false, message:"Les champs doivent etre remplis" });
         }
 
         const findArticle = await Article.findOne({ nom });
         if (findArticle) {
-            findArticle.quantity = quantity;
+            findArticle.quantite = quantite;
             findArticle.save();
             return res.status(200).json({ success:true, message:"Mise a jour du quantite" });
         }
 
-        const newArticle = await Article.create({ nom, quantity });
+        const newArticle = await Article.create({ nom, quantite });
         if (!newArticle) {
             articleLogger.error("Probleme survenu");
             return res.status(400).json({ success:false, message:"Probleme survenu" });
@@ -35,18 +35,18 @@ const createArticle = async function(req,res) {
 
 const updateArticle = async function(req,res) {
     try {
-        const { nom, quantity } = req.body;
+        const { nom, quantite } = req.body;
         const { id:article } = req.params;
 
         if (!article) {
             return res.status(400).json({ success:false, message:"Parametre doit etre donné"});
         }
-        if (!nom || !quantity) {
+        if (!nom || !quantite) {
             articleLogger.error("Les champs doivent etre remplis");
             return res.status(400).json({ success:false, message:"Les champs doivent etre remplis" });
         }
         
-        const findArticle = await Article.findByIdAndUpdate(article, { nom, quantity }, { new: true });
+        const findArticle = await Article.findByIdAndUpdate(article, { nom, quantite }, { new: true });
         if (!findArticle) {
             return res.status(404).json({ success:false, message:"article introuvable" });
         }
@@ -62,14 +62,20 @@ const updateArticle = async function(req,res) {
 const deleteArticle = async function(req,res) {
     try {
         const { id:article } = req.params;
+        console.log(article);
         if (!article) {
             return res.status(404).json({ success:false, message:"Parametre n'est pas passé" });
         }
 
         const findArticle = await Article.findByIdAndDelete(article);
+        const findInHistory = await History.findOne({ article });
         if (!findArticle) {
             articleLogger.error("Article introuvable");
             return res.status(404).json({ success:false, message:"Article introuvable" });
+        }
+
+        if (findInHistory) {
+            await History.deleteOne({ article });
         }
 
         articleLogger.info("Article supprimé");

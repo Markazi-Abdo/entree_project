@@ -1,4 +1,6 @@
+import { serverLogger } from "../logs/functions/server.log.js";
 import History from "../model/historique.model.js";
+import Article from "../model/produits.model.js";
 
 const getHistory = async function(req, res){
     try {
@@ -25,7 +27,7 @@ const getHistoryByType = async function(req, res) {
             return res.status(400).json({ success:false, message:"Le type n'est pas saisie" });
         }
 
-        const history = await History.find({ type });
+        const history = await History.find({ type }).populate("article");
         if (!history) {
             return res.status(404).json({ success:false, message:"Couldn't find Type" });
         }
@@ -53,8 +55,17 @@ const deleteHistory = async function(req, res) {
 
 const createSortie = async function(req, res) {
     try {
-        const { article } = req.body;
-        await History.create({ type:"Sortie", article:article._id });
+        const { article, number} = req.body;
+        const findArticle = await Article.findById(article?._id);
+        if (findArticle) {
+            const sortie = await History.create({ type:"Sortie", article:article._id });
+            findArticle.quantite -= number;
+            findArticle.save();
+            return res.status(200).json({ success:true, message:"Sortie est enregistrés", sortie });
+        } else {
+            return res.status(404).json({ success:false, message:"Article introuvable" });
+        }
+        
     } catch (error) {
         serverLogger.error(`Èrreur:${error.message} dans ${error.message}`);
         return res.status(500).json({ success:false, message:error.message });

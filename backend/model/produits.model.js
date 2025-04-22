@@ -5,7 +5,7 @@ const articleSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    quantity:{
+    quantite:{
         type:Number,
         required:true
     }

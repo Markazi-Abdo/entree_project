@@ -1,32 +1,31 @@
 import Article from "../model/produits.model.js";
 import History from "../model/historique.model.js";
 import User from "../model/user.model.js";
+import { serverLogger } from "../logs/functions/server.log.js";
 
-const getAnalytics = async function(req, res) {
+const getAnalytics = async function() {
     try {
-        const [ users, articles, sortie, entree ] = Promise.all([
+        const [ users, articles, sortie, entree ] = await Promise.all([
             User.countDocuments(),
             Article.countDocuments(),
-            History.find({ type:"Sortie" }).count(),
-            History.find({ type:"Entree" }).count()
+            History.find({ type:"Sortie" }).countDocuments(),
+            History.find({ type:"Entree" }).countDocuments()
         ])
 
-        return res.status(200).json({ 
-            success:true, 
-            message:"Récuperation des données a terminé avec succées", 
+        console.log({ users, articles, sortie, entree});
+        return {
             data:{ 
-                users, 
-                articles, 
-                histoires: { sortie, entree } 
-            } 
-        });
+            users, 
+            articles, 
+            histoires: { sortie, entree } 
+        }};
     } catch (error) {
         serverLogger.error(`Èrreur:${error.message} dans ${error.message}`);
-        return res.status(500).json({ success:false, message:error.message });
+        return error.message + error.stack;
     }
 }
 
-const getDaysInRange = async function(startDate, endDate) {
+const getDaysInRange = function(startDate, endDate) {
     const dates = [];
     const currentDate = new Date(startDate);
 
@@ -64,6 +63,7 @@ const getDailyEntreeHistory = async function(startDate, endDate) {
         ]) 
 
         const dates = getDaysInRange(startDate, endDate);
+        console.log(dates);
         const result = dates.map(date => {
             const foundDate = historyData.find(item => item._id === date);
 
@@ -93,8 +93,8 @@ const getDailySortieHistory = async function(startDate, endDate) {
             },
             {
                 $group:{
-                    _id:{ $dateToString:{ format:"%Y-%m-%d", date:$createdAt }},
-                    count:{ sum:1 }
+                    _id:{ $dateToString:{ format:"%Y-%m-%d", date:"$createdAt" }},
+                    count:{ $sum:1 }
                 }
             },
             {
@@ -129,6 +129,8 @@ const getData = async function(req, res) {
 
         const entreeAnalytics = await getDailyEntreeHistory(startDate, endDate);
         const sortieAnalytics = await getDailySortieHistory(startDate, endDate);
+
+        console.log({ analytics, entreeAnalytics });
 
         return res.status(200).json({ 
             success:true, 

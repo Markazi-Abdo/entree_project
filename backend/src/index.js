@@ -15,7 +15,7 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-    origin:"*",
+    origin:"http://localhost:5173",
     credentials:true
 }));
 app.use(cookieParser());
@@ -25,7 +25,7 @@ app.use(express.urlencoded({ extended:true, limit:"10mb" }));
 app.use("/niyaba/auth", auth);
 app.use("/niyaba/articles", articles);
 app.use("/niyaba/history", histRoutes);
-app.use("/niyaba/data", analytics);
+app.use("/niyaba/analytics", analytics);
 
 app.listen(process.env.PORT, async function(){
     serverLogger.info("Server is running perfectly");
