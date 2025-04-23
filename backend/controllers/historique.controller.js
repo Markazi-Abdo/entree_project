@@ -27,7 +27,7 @@ const getHistoryByType = async function(req, res) {
             return res.status(400).json({ success:false, message:"Le type n'est pas saisie" });
         }
 
-        const history = await History.find({ type }).populate("article");
+        const history = await History.find({ type }).populate("article").sort({ createdAt:1 });
         if (!history) {
             return res.status(404).json({ success:false, message:"Couldn't find Type" });
         }

@@ -130,8 +130,6 @@ const getData = async function(req, res) {
         const entreeAnalytics = await getDailyEntreeHistory(startDate, endDate);
         const sortieAnalytics = await getDailySortieHistory(startDate, endDate);
 
-        console.log({ analytics, entreeAnalytics });
-
         return res.status(200).json({ 
             success:true, 
             message:"Données recupérée pour admin", 
