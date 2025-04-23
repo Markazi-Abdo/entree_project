@@ -3,13 +3,12 @@ import { lazy, Suspense, useEffect } from "react"
 import Loading from "./components/Loading";
 import { Toaster } from "react-hot-toast"
 import useAuthStore from "./store/useStoreAuth";
-
-const Home = lazy(()=> import("./pages/Home"));
-const Signup = lazy(()=> import('./pages/Auth/Signup'));
-const Login = lazy(()=> import("./pages/Auth/Login"));
-const DashBoard = lazy(()=> import("./pages/DashBoard/DashBoard"));
-const Acceuil = lazy(()=> import("./components/Dashboard/Acceuil"));
-const Produits = lazy(()=> import("./components/Dashboard/Produits"));
+const Home = lazy(() => import("./pages/Home"));
+const Signup = lazy(() => import('./pages/Auth/Signup'));
+const Login = lazy(() => import("./pages/Auth/Login"));
+const DashBoard = lazy(() => import("./pages/DashBoard/DashBoard"));
+const Acceuil = lazy(() => import("./components/Dashboard/Acceuil"));
+const Produits = lazy(() => import("./components/Dashboard/Produits"));
 
 export default function App() {
   const { isLoading, user, getProfile } = useAuthStore();
@@ -18,11 +17,9 @@ export default function App() {
     getProfile();
   }, [ getProfile ])
 
-  console.log(user ? "User verfied" : "No user");
-
   if (isLoading) return <Loading />
   return (
-    <main className="bg-base-100 min-h-screen flex w-screen">
+    <main className="bg-base-100 min-h-screen flex w-screen ">
       <div className="w-full">
         <Suspense fallback={<Loading />}>
           <Paths>

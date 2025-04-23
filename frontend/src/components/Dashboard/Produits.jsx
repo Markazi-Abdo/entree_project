@@ -14,8 +14,8 @@ export default function Produits() {
   }
 
   return (
-    <main className='flex flex-col justify-center items-center gap-10 w-full h-full -translate-y-52'>
-        <div className='flex justify-center items-center h-56 gap-4 w-full -translate-x-10 translate-y-20'>
+    <main className='flex flex-col items-center gap-10 w-full h-full  -translate-y-16 overflow-y-hidden'>
+        <div className='flex justify-center items-center h-56 gap-4 w-full -translate-x-10 translate-y-10 shrink-0'>
             {
                 tabs.map(item => {
                     return(
@@ -23,6 +23,7 @@ export default function Produits() {
                         key={item.id}
                         title={item.title}
                         icon={item.icon}
+                        currentTab={currentTab}
                         func={changeCurrentTab}
                         />
                     )

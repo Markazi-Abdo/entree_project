@@ -28,7 +28,7 @@ export default function Acceuil() {
   }, [ formatHour ])
   
   return (
-    <div className='flex flex-col justify-center items-center h-full overflow-hidden font-bold p-5'>
+    <div className='flex flex-col justify-center items-center h-full overflow-hidden font-bold p-5 -translate-x-5'>
         <div className=' border border-primary rounded-xl text-center p-7 text-white bg-primary'>
           <h1 className='text-4xl text-center'> {new Date().getHours() < 12 ? `Bonjour ${user.nom}` : `Bonsoir ${user.nom}` }</h1>
           <time  className='text-2xl font-bold'>{time}</time>

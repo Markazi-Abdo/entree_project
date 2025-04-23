@@ -34,7 +34,8 @@ export default function Nouvelle() {
   }
 
   return (
-    <form className='border rounded-xl p-2 form-control gap-4 w-[700px] -translate-x-10 ' onSubmit={saveHandle}>
+    <form className='border rounded-xl p-2 form-control gap-4 w-[700px] -translate-x-10 h-full ' onSubmit={saveHandle}>
+        <h2 className='text-center text-2xl font-bold'>Enregistrez Une Entrée</h2>
         <label htmlFor="nom" className='flex justify-center items-center input input-md input-bordered font-bold gap-4'>
             <BoxIcon />
             <input 

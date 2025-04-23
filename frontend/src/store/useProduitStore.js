@@ -77,12 +77,34 @@ const useProductStore = create((set, get) => ({
         set({ isLoading:true });
         try {
             const newSortie = await AxiosInstance.post("/history/sortie", { article, number });
-            set((prev) => ({ sorties:[...prev.sorties, newSortie.data.sortie ] }));
+            set((prev) => ({ sorties:[...prev.sorties, newSortie.data.sortie ]}));
+            set((prev) => {
+                const findArticle = prev?.entrees?.find(item => item._id === article._id);
+                const updatedEntrees = findArticle 
+                && prev?.entress?.map(item => item._id === findArticle._id ? {...item, quantite:item.quantite - number} : item);
+                return { entrees:updatedEntrees };
+            })
             toast.success("Sortie Enregistées");
         } catch (error) {
             console.error(error.message);
         } finally {
             set({ isLoading:false });
+        }
+    },
+    deleteSortie: async function(id) {
+        set({ isLoading:true });
+        try {
+            set((prev) => {
+                const findItem = prev?.sorties?.find(item => item._id === id);
+                const updatedSorties = findItem
+                && prev?.sorties?.filter(item => item._id !== id);
+                return { sorties:updatedSorties };
+            })
+            toast.success("Supprimes");
+        } catch (error) {
+            console.error(error.message);
+        } finally {
+            set({ isLoading:false })
         }
     }
 }))
