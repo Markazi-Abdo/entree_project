@@ -16,7 +16,7 @@ export default function Home() {
                 </i>
             </div>
             <h1 className='capitalize text-4xl text-slate-950 font-bold'>Gérer les entrees de vos materiels efficacement</h1>
-            <Link className='btn btn-square bg-slate-950 flex items-center w-1/3 text-white transition hover:-translate-y-0.5' to="/dashboard">
+            <Link className='btn btn-square bg-primary flex items-center w-1/3 text-white transition hover:-translate-y-0.5' to="/dashboard">
                     <span>Allez-y</span>
                     <i><ArrowBigRightIcon /></i>
             </Link> 

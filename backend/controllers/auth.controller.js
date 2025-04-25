@@ -124,7 +124,6 @@ const logOutUser = async function(req, res) {
             return res.status(404).json({ success:false, message:"Token invalide" });
         }
 
-        await redis.del(`access_token_${decoded.userId}`);
         res.clearCookie("access_token");
 
         return res.status(200).json({ sucees:true, message:"User logged Out succesfully" });

@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react'
 import useAuthStore from '../../store/useStoreAuth'
 
 export default function Acceuil() {
-  const { user } = useAuthStore();
+  const { user, onlineUsers } = useAuthStore();
   const [ time, setTime ] = useState("");
   const padHours = (number) => {
     return number < 10 ? number = "0"+number : number
   }
-
+  
+  console.log(onlineUsers);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const formatHour = function() {
     const date = new Date();

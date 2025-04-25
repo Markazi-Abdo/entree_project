@@ -12,7 +12,6 @@ const getAnalytics = async function() {
             History.find({ type:"Entree" }).countDocuments()
         ])
 
-        console.log({ users, articles, sortie, entree});
         return {
             data:{ 
             users, 
@@ -63,7 +62,6 @@ const getDailyEntreeHistory = async function(startDate, endDate) {
         ]) 
 
         const dates = getDaysInRange(startDate, endDate);
-        console.log(dates);
         const result = dates.map(date => {
             const foundDate = historyData.find(item => item._id === date);
 

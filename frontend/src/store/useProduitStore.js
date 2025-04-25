@@ -1,17 +1,22 @@
 import { create } from "zustand";
 import AxiosInstance from "../utils/axios";
 import toast from "react-hot-toast";
+import useAuthStore from "./useStoreAuth";
 
 const useProductStore = create((set, get) => ({
     entrees:[],
     sorties:[],
+    socket: null,
     isLoading:false,
 
     saveEntree: async function(data) {
+        const { downloadEntreeFile } = get();
         set({ isLoading:true });
         try {
             const save = await AxiosInstance.post("/articles/create", data);
+            get().listenForUpdates();
             set({ entrees:[...get().entrees, save.data.newArticle] });
+            downloadEntreeFile(data);
             console.log("Article created");
         } catch (error) {
             console.error(error.message)
@@ -61,6 +66,7 @@ const useProductStore = create((set, get) => ({
         set({ isLoading:true });
         try {
             const product = await AxiosInstance.put(`/articles/update/${id}`, data);
+            get().listenForUpdates();
             set((prev) => {
                 const findItem = prev?.entrees?.find(item => item._id === id);
                 const updatedState = findItem
@@ -75,6 +81,7 @@ const useProductStore = create((set, get) => ({
     },
     setSortie: async function(article, number) {
         set({ isLoading:true });
+        const { downloadSortieFile } = get();
         try {
             const newSortie = await AxiosInstance.post("/history/sortie", { article, number });
             set((prev) => ({ sorties:[...prev.sorties, newSortie.data.sortie ]}));
@@ -84,6 +91,7 @@ const useProductStore = create((set, get) => ({
                 && prev?.entress?.map(item => item._id === findArticle._id ? {...item, quantite:item.quantite - number} : item);
                 return { entrees:updatedEntrees };
             })
+            downloadSortieFile(article);
             toast.success("Sortie Enregistées");
         } catch (error) {
             console.error(error.message);
@@ -103,6 +111,56 @@ const useProductStore = create((set, get) => ({
             toast.success("Supprimes");
         } catch (error) {
             console.error(error.message);
+        } finally {
+            set({ isLoading:false })
+        }
+    },
+    listenForUpdates: function() {
+        const socket = useAuthStore.getState().ioSocket;
+        if (!socket) return;
+        
+        socket.on("getEntrees", (data) => {
+            set({ entrees:[...get().entrees, data]})
+        })
+    },
+    downloadEntreeFile: async function(data) {
+        set({ isLoading:true })
+        console.log(data);
+        try {
+            const res = await AxiosInstance.post(
+                "/articles/download_entree", 
+                {article:data},
+                { responseType:"blob" }
+            )
+           
+            const url = window.URL.createObjectURL(new Blob([res.data]));
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", `entree-${data.nom}.docx`)
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+        } catch (error) {
+            console.log(error.message); 
+        } finally {
+            set({ isLoading:false })
+        }
+    },
+    downloadSortieFile: async function(data) {
+        set({ isLoading:true });
+        try {
+            const res = await AxiosInstance.post("/articles/download_sortie", { article:data }, { responseType:"blob" });
+
+            const url = window.URL.createObjectURL(new Blob([res.data]));
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", `${data.nom}_decharge_document.docx`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        } catch (error) {
+            console.log(error.message)
         } finally {
             set({ isLoading:false })
         }

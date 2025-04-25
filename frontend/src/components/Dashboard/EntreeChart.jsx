@@ -7,7 +7,7 @@ export default function EntreeChart({data}) {
     <div className='w-[950px] h-full border-2 rounded-xl mt-3 p-2 overflow-hidden'>
           <ResponsiveContainer height={350} width={"100%"}>
               <LineChart data={data?.entreeAnalytics || []}>
-                <CartesianGrid stroke="#E3F2FD" strokeDasharray="5 5"/>
+                <CartesianGrid stroke="#E3F2FD" strokeDasharray="20 20"/>
                 <XAxis dataKey={"date"} stroke="#90CAF9"/>
                 <YAxis yAxisId={"left"} stroke="#90CAF9"/>
                 <Tooltip />

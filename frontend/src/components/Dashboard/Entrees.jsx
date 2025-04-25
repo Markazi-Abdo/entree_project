@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import useProductStore from '../../store/useProduitStore'
 import Loading from '../Loading';
-import { LoaderCircleIcon, MoveLeftIcon, MoveRightIcon } from 'lucide-react';
+import { LoaderCircleIcon, MoveLeftIcon, MoveRightIcon, RecycleIcon, SearchIcon } from 'lucide-react';
 import EntreeCard from '../Recycle/EntreeCard';
 
 export default function Entrees() {
@@ -26,21 +26,13 @@ export default function Entrees() {
     setCurrentIndex((prevIndex) => prevIndex - viewPerPage);
   }
 
+  const filtered = search ? entrees?.filter(item =>
+    item?.article?.nom?.toLowerCase().includes(search.toLowerCase())
+  ) : entrees;
+  let listOfEntrees = filtered?.slice(currentIndex, currentIndex + viewPerPage);
   const isStart = currentIndex === 0;
-  const isEnd = currentIndex >= entrees?.length - viewPerPage;
-  let listOfEntrees = entrees?.splice(currentIndex, currentIndex + viewPerPage);
-
-  const filterSearch = () => {
-    listOfEntrees = entrees?.filter(item =>
-      item?.toLowerCase().includes(search?.toLowerCase())
-    )
-    
-  }
-
-  const handleChange = (e) => {
-    setSearch(e.target.value);
-    filterSearch()
-  }
+  const isEnd = currentIndex >= filtered?.length - viewPerPage;
+  
 
   return (
     <div className='w-full flex justify-center items-center flex-col gap-4 h-full '>
@@ -48,9 +40,9 @@ export default function Entrees() {
         <h1 className='text-center text-4xl'>Entrées Enregistrés</h1>
         <input 
         type="text" 
-        className='input input-md input-bordered w-3/6'
+        className='input input-md input-bordered w-96 rounded-xl'
         value={search}
-        onChange={handleChange}
+        onChange={(e)=>setSearch(e.target.value)}
         placeholder='Cherchez Une Entrée'
         />
       </div>
@@ -67,10 +59,10 @@ export default function Entrees() {
                     />
           })
         }
-        <button className='btn btn-sm btn-square btn-primary tooltip tooltip-left ' onClick={nextButton} disabled={isStart} data-tip="Arriére">
+        <button className='btn btn-sm btn-square btn-primary rounded-lg' onClick={prevButton} disabled={isStart}>
           <MoveLeftIcon />
         </button>
-        <button className='btn btn-sm btn-square btn-primary ml-5 tooltip tooltip-right ' onClick={prevButton} disabled={isEnd} data-tip="Suivant">
+        <button className='btn btn-sm btn-square btn-primary ml-5 rounded-lg' onClick={nextButton} disabled={isEnd}>
           <MoveRightIcon />
         </button>
       </div>
