@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useAnalyticsStore } from '../../store/useAnalytics'
-import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis,} from "recharts"
 import { LoaderPinwheelIcon } from 'lucide-react';
 import EntreeChart from './EntreeChart';
 import SortieChart from './SortieChart';
@@ -14,11 +13,14 @@ export default function Analytiques() {
   }, [ getData ])
 
   if (isLoading) {
-    return <LoaderPinwheelIcon className="animate-spin"/>
+    return <div className='flex flex-col items-center justify-center h-[500px]'>
+        <LoaderPinwheelIcon className='animate-spin'/>
+    </div>
   }
 
   return (
-    <div className='flex flex-col items-center w-full'>
+    <div className='flex flex-col justify-center items-center w-full mt-20'>
+      <h2 className='text-4xl font-bold mb-10 capitalize'>Historique enregistrés</h2>
       <div className='flex justify-center items-center gap-5 capitalize z-50'>
           <h1>Total des admins:  { data?.analytics?.data?.users }</h1>
           <h1>Total des entrees: { data?.analytics?.data?.histoires?.entree }</h1>

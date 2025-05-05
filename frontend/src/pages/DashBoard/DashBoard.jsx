@@ -6,7 +6,7 @@ export default function DashBoard() {
   return (
     <div className='h-full overflow-hidden'>
         <Navbar />
-        <div className='h-full'>
+        <div className='overflow-auto flex-1'>
             <Outlet />
         </div>
     </div>

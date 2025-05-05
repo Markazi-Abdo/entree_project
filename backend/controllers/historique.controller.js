@@ -1,6 +1,8 @@
+import { generateExcelEntree, generateExcelSortie } from "../downloads/excel.js";
 import { serverLogger } from "../logs/functions/server.log.js";
 import History from "../model/historique.model.js";
 import Article from "../model/produits.model.js";
+import Sortie from "../model/sortie.model.js";
 
 const getHistory = async function(req, res){
     try {
@@ -43,6 +45,25 @@ const getHistoryByType = async function(req, res) {
     }
 }
 
+const getSorties = async function(req, res) {
+    try {
+        const sorties = await Sortie.find({});
+
+        if (!sorties) {
+            return res.status(400).json({ success:false, message:"Couldn't get sorties" });
+        }
+
+        if (sorties.length === 0) {
+            return res.status(200).json({ success:true, message:"Sorties list is empty", sorties });
+        }
+
+        return res.status(200).json({ success:true, message:"Succesfully", sorties });
+    } catch (error) {
+        serverLogger.error(`Èrreur:${error.message} dans ${error.message}`);
+        return res.status(500).json({ success:false, message:error.message });
+    }
+}
+
 const deleteHistory = async function(req, res) {
     try{
         await History.deleteMany({});
@@ -53,23 +74,75 @@ const deleteHistory = async function(req, res) {
     }
 }
 
+const deleteEntreeHistory = async function(req, res) {
+    try {
+        await History.deleteMany({ type:"Entree" });
+        return res.status(203);
+    } catch (error) {
+        return res.status(500).json({ success:false, message:error.message });
+    }
+}
+
+const deleteSortieHistory = async function(req, res) {
+    try {
+        await History.deleteMany({ type:"Sortie" });
+        return res.status(203);
+    } catch (error) {
+        return res.status(500).json({ success:false, message:error.message })
+    }
+}
+
 const createSortie = async function(req, res) {
     try {
-        const { article, number} = req.body;
-        const findArticle = await Article.findById(article?._id);
-        if (findArticle) {
-            const sortie = await History.create({ type:"Sortie", article:article._id });
-            findArticle.quantite -= number;
-            findArticle.save();
-            return res.status(200).json({ success:true, message:"Sortie est enregistrés", sortie });
-        } else {
-            return res.status(404).json({ success:false, message:"Article introuvable" });
+        const { sorties } = req.body;
+        if (!Array.isArray(sorties)) {
+            return res.status(400).json({ success:false, message:"Format Invalid" })
         }
-        
+
+        const newSortie = await Sortie.create({ articles:sorties });
+        sorties.forEach(async item => {
+            const article = await Article.findById(item?.article?._id);
+            article.quantite -= item?.quantite;
+            await article.save(); 
+        })
+
+        return res.status(201).json({ success:true, message:"Sortie enregistré", newSortie });
     } catch (error) {
         serverLogger.error(`Èrreur:${error.message} dans ${error.message}`);
         return res.status(500).json({ success:false, message:error.message });
     }
 }
 
-export { getHistory, getHistoryByType, deleteHistory, createSortie}
+const donwloadExcelFileEntree = async function(req, res) {
+    try {
+        const { data } = req.body;
+        if (!data) {
+            return res.status(400).json({ success:false, message:"No data was provided, couldn't generate excle sheet"});
+        }
+
+        const filePath = generateExcelEntree(data);
+        return res.download(filePath, `entrees.xlsx`, (error) => {
+            if (error) console.log(error.message);
+        })
+    } catch (error) {
+        return res.status(500).json({ success:false, message:error.message })
+    }
+}
+
+const donwloadExcelFileSortie = async function(req, res) {
+    try {
+        const { data } = req.body;
+        if (!data) {
+            return res.status(400).json({ success:false, message:"No data was provided, couldn't generate excle sheet"});
+        }
+
+        const filePath = generateExcelSortie(data);
+        return res.download(filePath, `sorties.xlsx`, (error) => {
+            if (error) console.log(error.message);
+        })
+    } catch (error) {
+        return res.status(500).json({ success:false, message:error.message })
+    }
+}
+
+export { getHistory, getHistoryByType, deleteHistory, createSortie, donwloadExcelFileEntree, donwloadExcelFileSortie, getSorties}

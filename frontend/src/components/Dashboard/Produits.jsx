@@ -40,9 +40,6 @@ export default function Produits() {
             {
                 currentTab === "Sorties" && <Sorties />
             }
-            {
-                currentTab === "Analytiques" && <Analytiques />
-            }
         </div>
     </main>
   )

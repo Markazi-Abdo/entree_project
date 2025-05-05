@@ -2,6 +2,7 @@ import Article from "../model/produits.model.js";
 import History from "../model/historique.model.js";
 import User from "../model/user.model.js";
 import { serverLogger } from "../logs/functions/server.log.js";
+import Sortie from "../model/sortie.model.js";
 
 const getAnalytics = async function() {
     try {
@@ -9,7 +10,7 @@ const getAnalytics = async function() {
             User.countDocuments(),
             Article.countDocuments(),
             History.find({ type:"Sortie" }).countDocuments(),
-            History.find({ type:"Entree" }).countDocuments()
+            Sortie.countDocuments()
         ])
 
         return {
@@ -34,6 +35,31 @@ const getDaysInRange = function(startDate, endDate) {
     }
 
     return dates;
+}
+
+const getMonthsInRange = function() {
+    const months = [];
+    const endMonth = 12;
+    let cuurentMonth = new Date().getMonth();
+
+    for (let i = 0; i < 12; i++) {
+        if (cuurentMonth >= 12) {
+            cuurentMonth = 1;
+            months.push(cuurentMonth);
+        }
+        months.push(cuurentMonth + 1);
+        cuurentMonth += 1;
+    }
+
+    return months;    
+}
+
+const getMonthlyEntreeHistory = async function(startMonth, endMonth) {
+    try {
+        
+    } catch (error) {
+        throw new error;
+    }
 }
 
 const getDailyEntreeHistory = async function(startDate, endDate) {
@@ -79,10 +105,9 @@ const getDailyEntreeHistory = async function(startDate, endDate) {
 
 const getDailySortieHistory = async function(startDate, endDate) {
     try {
-        const sortieHistory = await History.aggregate([
+        const sortieHistory = await Sortie.aggregate([
             {
                 $match:{
-                    type:"Sortie",
                     createdAt:{
                         $gte:startDate,
                         $lte:endDate

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import useAuthStore from '../../store/useStoreAuth'
+import { Link } from 'react-router-dom';
 
 export default function Acceuil() {
   const { user, onlineUsers } = useAuthStore();
@@ -29,10 +30,13 @@ export default function Acceuil() {
   }, [ formatHour ])
   
   return (
-    <div className='flex flex-col justify-center items-center h-full overflow-hidden font-bold p-5 -translate-x-5'>
-        <div className=' border border-primary rounded-xl text-center p-7 text-white bg-primary'>
+    <div className='flex flex-col justify-center items-center h-[500px] overflow-hidden font-bold p-5 -translate-x-5'>
+        <div className=' border border-primary rounded-xl text-center p-7 text-white bg-primary w-[500px]'>
           <h1 className='text-4xl text-center'> {new Date().getHours() < 12 ? `Bonjour ${user.nom}` : `Bonsoir ${user.nom}` }</h1>
           <time  className='text-2xl font-bold'>{time}</time>
+          <Link to="produits" className='btn btn-square bg-white text-black rounded-lg w-full mt-5'>
+            Voir les entrees
+          </Link>
         </div>
     </div>
   )

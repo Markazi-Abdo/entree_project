@@ -21,14 +21,20 @@ const userSchema = new mongoose.Schema({
 },{ timestamps:true })
 
 userSchema.pre("save", async function(){
-    if (!this.isModified("motPasse")) return;
+    try {
+        if (!this.isModified("motPasse")) return next();
 
-    const salt = await bcrypt.genSalt(10);
-    this.motPasse = await bcrypt.hash(this.motPasse, 10);
+        const salt = await bcrypt.genSalt(10);
+        this.motPasse = await bcrypt.hash(this.motPasse, 10);
+    } catch (error) {
+        next(error);
+    }
+    
 })
 
 userSchema.methods.validatePassword = async function(password) {
     return await bcrypt.compare(password, this.motPasse);
 }
+
 const User = mongoose.model("User", userSchema);
 export default User;

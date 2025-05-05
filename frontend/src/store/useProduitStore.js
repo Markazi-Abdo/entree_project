@@ -38,8 +38,8 @@ const useProductStore = create((set, get) => ({
     getSorties: async function() {
         set({ isLoading:true });
         try {
-            const data = await AxiosInstance.get("/history/all/Sortie");
-            set({ sorties:data.data.history});
+            const data = await AxiosInstance.get("/history/allsorties");
+            set({ sorties:data.data.sorties });
         } catch (error) {
             console.error(error.message);
         } finally {
@@ -79,19 +79,13 @@ const useProductStore = create((set, get) => ({
             set({ isLoading:false })
         }
     },
-    setSortie: async function(article, number) {
+    setSortie: async function(sorties) {
         set({ isLoading:true });
         const { downloadSortieFile } = get();
         try {
-            const newSortie = await AxiosInstance.post("/history/sortie", { article, number });
-            set((prev) => ({ sorties:[...prev.sorties, newSortie.data.sortie ]}));
-            set((prev) => {
-                const findArticle = prev?.entrees?.find(item => item._id === article._id);
-                const updatedEntrees = findArticle 
-                && prev?.entress?.map(item => item._id === findArticle._id ? {...item, quantite:item.quantite - number} : item);
-                return { entrees:updatedEntrees };
-            })
-            downloadSortieFile(article);
+            const newSortie = await AxiosInstance.post("/history/sortie", {sorties});
+            set((prev) => ({ sorties:[...prev.sorties, newSortie.data.newSortie ]}));
+            downloadSortieFile(sorties);
             toast.success("Sortie Enregistées");
         } catch (error) {
             console.error(error.message);
@@ -129,18 +123,17 @@ const useProductStore = create((set, get) => ({
         try {
             const res = await AxiosInstance.post(
                 "/articles/download_entree", 
-                {article:data},
+                { article:data },
                 { responseType:"blob" }
             )
-           
+
             const url = window.URL.createObjectURL(new Blob([res.data]));
             const link = document.createElement("a");
             link.href = url;
-            link.setAttribute("download", `entree-${data.nom}.docx`)
+            link.setAttribute("download", `entree-${data.nom}.docx`);
             document.body.appendChild(link);
             link.click();
             link.remove();
-
         } catch (error) {
             console.log(error.message); 
         } finally {

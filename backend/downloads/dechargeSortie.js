@@ -2,8 +2,6 @@ import Docxtemplater from "docxtemplater";
 import PizZip from "pizzip";
 import fs from "fs";
 import { serverLogger } from "../logs/functions/server.log.js";
-import path from "path";
-import { fileURLToPath } from "url";
 
 const makeDocFile = function(data) {
     const fileContent = fs.readFileSync("../backend/test/decharge_test.docx", "binary");
@@ -14,12 +12,19 @@ const makeDocFile = function(data) {
         linebreaks:true
     });
 
+    const transformedData = data.map(dt => {
+        return {
+            id:dt?.article?._id || " ",
+            nom:dt?.article?.nom,
+            quantite:dt?.quantite
+        }
+    })
+
     try {
         doc.render({
-            id:data._id,
-            nom:data.nom,
-            quantite:data.quantite
+            articles:transformedData
         });
+
     } catch (error) {
         console.error("Error in file creation: " + error.message)
     }

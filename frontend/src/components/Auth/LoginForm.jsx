@@ -51,8 +51,12 @@ export default function LoginForm() {
     e.preventDefault();
     if (validateData()) {
         const { confirmPasse, ...userData } = data;
-        await logIn(userData);
-        navigate("/");
+        const act = await logIn(userData);
+        if (act.data.response.success) {
+            navigate("/");
+        } else {
+            console.log(act.data.response.message)
+        }
     }
   }
 

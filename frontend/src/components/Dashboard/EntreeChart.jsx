@@ -1,10 +1,15 @@
 import React from 'react'
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis,} from "recharts";
+import { useAnalyticsStore } from '../../store/useAnalytics';
 
 export default function EntreeChart({data}) {
-  console.log(data)  
+  const { downloadExcelEntree } = useAnalyticsStore();
+  
   return (
     <div className='w-[950px] h-full border-2 rounded-xl mt-3 p-2 overflow-hidden'>
+          <button 
+          onClick={() => downloadExcelEntree(data?.entreeAnalytics)}
+          className='btn btn-square btn-primary w-full rounded-xl'>Export Excle</button>
           <ResponsiveContainer height={350} width={"100%"}>
               <LineChart data={data?.entreeAnalytics || []}>
                 <CartesianGrid stroke="#E3F2FD" strokeDasharray="20 20"/>

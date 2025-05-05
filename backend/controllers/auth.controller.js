@@ -96,8 +96,13 @@ const logInUser = async function(req, res) {
         const isValid = validateLogInUser({ email, motPasse }, res)
         if (isValid) {
             const findUser = await User.findOne({ email });
-            const compare = await findUser.validatePassword(motPasse);
-            if (!findUser || !compare) {
+            if (!findUser) {
+                authLogger.error("Utilisateur non reconnue");
+                return res.status(404).json({ success:false, message:"Utilisateur non reconneu" });
+            }
+
+            const passValid = await findUser.validatePassword(motPasse);
+            if (!passValid) {
                 authLogger.error("Utilisateur non reconnue");
                 return res.status(404).json({ success:false, message:"Utilisateur non reconneu" });
             }
@@ -107,7 +112,7 @@ const logInUser = async function(req, res) {
             return res.status(200).json({ success:true, message:"Utilisateur connecté avec succeé", user:findUser });
         }
     } catch (error) {
-        serverLogger.error(`Èrreur:${error.message} dans ${error.message}`);
+        serverLogger.error(`Èrreur:${error.message} dans ${error.stack}`);
         return res.status(500).json({ success:false, message:error.message });
     }
 }

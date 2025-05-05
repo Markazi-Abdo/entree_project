@@ -8,6 +8,18 @@ const historySchema = new mongoose.Schema({
     article:{
         type:mongoose.Types.ObjectId,
         ref:"Article"
+    },
+    sorties:{
+        type:Array
+    }
+    ,
+    by:{
+        type:mongoose.Types.ObjectId,
+        ref:"User"
+    },
+    to:{
+        type:mongoose.Types.ObjectId,
+        ref:"School"
     }
 }, { timestamps:true });
 

@@ -5,7 +5,7 @@ import EntreeCard from '../Recycle/EntreeCard';
 import SortieCard from '../Recycle/SortieCard';
 
 export default function Sorties() {
-  const { isLoading, sorties, getSorties, deleteSortie } = useProductStore();
+  const { isLoading, sorties, getSorties } = useProductStore();
   const [ viewPerPage, setViewPerPage ] = useState(4);
   const [ currentIndex, setCurrentIndex ] = useState(0);
   const [ search, setSearch ] = useState("");
@@ -13,7 +13,7 @@ export default function Sorties() {
   useEffect(()=>{
     getSorties();
   }, [ getSorties ])
-  
+  console.log(sorties)
   if (isLoading) {
     return <LucideLoaderCircle className='animate-spin'/>
   }
@@ -50,8 +50,9 @@ export default function Sorties() {
             return <SortieCard
                     key={item._id}
                     id={item._id}
-                    article={item.article}
-                    delFunc={deleteSortie}
+                    articles={item?.articles}
+                    quantite={item.quantite}
+                    createdAt={item.createdAt}
                   />
           })
         }

@@ -19,6 +19,7 @@ const useAuthStore = create((set, get) => ({
             toast.success("Signup avec successs");
         } catch (error) {
             console.error("Error in signUp function: " + error.message);
+            toast.error(error.message)
         } finally {
             set({ isLoading:false });
         }
@@ -32,6 +33,7 @@ const useAuthStore = create((set, get) => ({
             toast.success("Login avec success");
         } catch (error) {
             console.error("Error in Login Function: " + error.message);
+            toast.error(error.response.data.message)
         } finally {
             set({ isLoading:false });
         }

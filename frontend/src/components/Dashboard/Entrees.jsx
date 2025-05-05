@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import useProductStore from '../../store/useProduitStore'
 import Loading from '../Loading';
-import { LoaderCircleIcon, MoveLeftIcon, MoveRightIcon, RecycleIcon, SearchIcon } from 'lucide-react';
+import { ExternalLink, InfoIcon, LoaderCircleIcon, MoveLeftIcon, MoveRightIcon, RecycleIcon, SearchIcon, XIcon } from 'lucide-react';
 import EntreeCard from '../Recycle/EntreeCard';
+import SortieModal from './SortieModal';
 
 export default function Entrees() {
   const { isLoading, entrees, getEntrees, deleteEntree, setSortie } = useProductStore();
+  const [ checkedEntrees, setCheckedEntrees ] = useState([]);
   const [ viewPerPage, setViewPerPage ] = useState(4);
   const [ currentIndex, setCurrentIndex ] = useState(0);
   const [ search, setSearch ] = useState("");
-  
+
   useEffect(()=>{
     getEntrees();
   }, [ getEntrees ])
@@ -17,13 +19,24 @@ export default function Entrees() {
   if (isLoading) {
     return <LoaderCircleIcon className='animate-spin'/>
   }
-   
+
   const nextButton = () => {
     setCurrentIndex((prevIndex) => prevIndex + viewPerPage);
   }
 
   const prevButton = () => {
     setCurrentIndex((prevIndex) => prevIndex - viewPerPage);
+  }
+
+  const onHandleCheckBoxFunc = (article) => {
+    setCheckedEntrees((prev) => {
+      const isChecked = prev.some(item => item._id === article._id);
+      return isChecked ? prev.filter(item => item._id !== article._id) : [...prev, article];
+    })
+  }
+
+  const clearArray = () => {
+    setCheckedEntrees([]);
   }
 
   const filtered = search ? entrees?.filter(item =>
@@ -40,11 +53,23 @@ export default function Entrees() {
         <h1 className='text-center text-4xl'>Entrées Enregistrés</h1>
         <input 
         type="text" 
-        className='input input-md input-bordered w-96 rounded-xl'
+        className='input input-md input-bordered w-80 rounded-xl'
         value={search}
         onChange={(e)=>setSearch(e.target.value)}
         placeholder='Cherchez Une Entrée'
         />
+        {
+          checkedEntrees.length > 0 &&
+          <div className='flex items-center w-1/5 gap-2 transition-all'>
+            <button className='btn btn-square btn-secondary w-1/3 rounded-xl cursor-default'>{checkedEntrees.length}</button>
+            <button className='btn btn-square btn-secondary w-1/3 rounded-xl' onClick={() => document.getElementById("sorties_modal").showModal()}>
+              <ExternalLink />
+            </button>
+            <button className='btn btn-square btn-secondary w-1/3 rounded-xl' onClick={clearArray}> 
+              <XIcon />
+            </button>
+          </div>
+        }
       </div>
       <div className='space-y-2 relative'>
         {
@@ -56,6 +81,8 @@ export default function Entrees() {
                     article={item?.article}
                     quantite={item?.article?.quantite}
                     delFunc={deleteEntree}
+                    checkedEntrees={checkedEntrees}
+                    handler={onHandleCheckBoxFunc}
                     />
           })
         }
@@ -66,6 +93,9 @@ export default function Entrees() {
           <MoveRightIcon />
         </button>
       </div>
+      <SortieModal 
+      articles={checkedEntrees}
+      />
     </div>
   )
 }
