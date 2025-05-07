@@ -4,6 +4,7 @@ import { articleLogger } from "../logs/functions/article.log.js";
 import { serverLogger } from "../logs/functions/server.log.js";
 import History from "../model/historique.model.js";
 import Article from "../model/produits.model.js";
+import School from "../model/school.model.js";
 import { serverNamespace } from "../src/index.js";
 
 const entrees = {};
@@ -143,6 +144,25 @@ const getArticles = async function(req,res) {
 
         articleLogger.info("Recuperées avec succes");
         return res.status(200).json({ success:true, message:"Recuperées avec succes", articles });
+    } catch (error) {
+        serverLogger.error(`Èrreur:${error.message} dans ${error.message}`);
+        return res.status(500).json({ success:false, message:error.message });
+    }
+}
+
+export const getSchools = async function(req, res) {
+    try {
+        const schools = await School.find({});
+
+        if (!schools) {
+            return res.status(400).json({ success:false, message:"Couldn't get schools" });
+        }
+
+        if (schools.length == 0) {
+            return res.status(200).json({ success:true, message:"School list is empty", schools });
+        }
+
+        return res.status(200).json({ success:true, message:"Got schools succefully", schools });
     } catch (error) {
         serverLogger.error(`Èrreur:${error.message} dans ${error.message}`);
         return res.status(500).json({ success:false, message:error.message });

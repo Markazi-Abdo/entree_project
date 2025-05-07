@@ -12,15 +12,16 @@ const schoolSchema = new mongoose.Schema({
     },
     siecle:{
         type:String,
-        required:true
     },
     dateOuverture:{
         type:Date,
-        required:true
     },
     commune:{
         type:String,
-        required:true
+    },
+    type:{
+        type:String,
+        enum:["Prive", "Public"],
     }
 })
 

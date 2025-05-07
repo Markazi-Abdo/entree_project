@@ -2,6 +2,7 @@ import { generateExcelEntree, generateExcelSortie } from "../downloads/excel.js"
 import { serverLogger } from "../logs/functions/server.log.js";
 import History from "../model/historique.model.js";
 import Article from "../model/produits.model.js";
+import School from "../model/school.model.js";
 import Sortie from "../model/sortie.model.js";
 
 const getHistory = async function(req, res){
@@ -94,12 +95,21 @@ const deleteSortieHistory = async function(req, res) {
 
 const createSortie = async function(req, res) {
     try {
-        const { sorties } = req.body;
-        if (!Array.isArray(sorties)) {
-            return res.status(400).json({ success:false, message:"Format Invalid" })
+        const { sorties, to:codeGrise } = req.body;
+        if (!Array.isArray(sorties) && !sorties) {
+            return res.status(400).json({ success:false, message:"Format Invalid or empty array" })
         }
 
-        const newSortie = await Sortie.create({ articles:sorties });
+        if (!codeGrise) {
+            return res.status(200).json({ success:false, message:"Recipient is important" });
+        }
+
+        const findTo = await School.findOne({ codeGrise });
+        if (!findTo) {
+            return res.status(400).json({ success:false, message:"School unregistered" });
+        }
+        
+        const newSortie = await Sortie.create({ articles:sorties, to });
         sorties.forEach(async item => {
             const article = await Article.findById(item?.article?._id);
             article.quantite -= item?.quantite;

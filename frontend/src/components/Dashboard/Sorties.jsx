@@ -13,7 +13,7 @@ export default function Sorties() {
   useEffect(()=>{
     getSorties();
   }, [ getSorties ])
-  console.log(sorties)
+
   if (isLoading) {
     return <LucideLoaderCircle className='animate-spin'/>
   }
@@ -48,11 +48,12 @@ export default function Sorties() {
         {
           ListOfSorties?.map(item => {
             return <SortieCard
-                    key={item._id}
-                    id={item._id}
+                    key={item?._id}
+                    id={item?._id}
                     articles={item?.articles}
-                    quantite={item.quantite}
-                    createdAt={item.createdAt}
+                    quantite={item?.quantite}
+                    createdAt={item?.createdAt}
+                    to={item.to}
                   />
           })
         }

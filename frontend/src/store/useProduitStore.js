@@ -79,11 +79,11 @@ const useProductStore = create((set, get) => ({
             set({ isLoading:false })
         }
     },
-    setSortie: async function(sorties) {
+    setSortie: async function(sorties, to) {
         set({ isLoading:true });
         const { downloadSortieFile } = get();
         try {
-            const newSortie = await AxiosInstance.post("/history/sortie", {sorties});
+            const newSortie = await AxiosInstance.post("/history/sortie", {sorties, to});
             set((prev) => ({ sorties:[...prev.sorties, newSortie.data.newSortie ]}));
             downloadSortieFile(sorties);
             toast.success("Sortie Enregistées");
