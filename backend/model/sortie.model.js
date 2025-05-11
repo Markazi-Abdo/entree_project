@@ -6,7 +6,7 @@ const sortieSchema = new mongoose.Schema({
         required:true
     },
     to:{
-        type:String
+        type:Object
     }
 }, { timestamps:true })
 

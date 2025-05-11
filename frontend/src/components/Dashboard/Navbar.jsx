@@ -1,4 +1,4 @@
-import { BoxesIcon, HomeIcon, LineChartIcon, LogOutIcon, LucideLogOut } from 'lucide-react'
+import { BoxesIcon, HomeIcon, LineChartIcon, LogOutIcon, LucideLogOut, School2Icon } from 'lucide-react'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import useAuthStore from '../../store/useStoreAuth'
@@ -19,6 +19,10 @@ export default function Navbar() {
           <Link to="analytiques" className='btn btn-square btn-primary rounded-lg'>
             <LineChartIcon />
             <span>Analytiques</span>
+          </Link>
+          <Link to="ecole" className='btn btn-square btn-primary rounded-lg'>
+            <School2Icon />
+            <span>Ecoles</span>
           </Link>
         <button className='btn btn-square btn-primary rounded-xl' onClick={logout}>
           <i>

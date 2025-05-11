@@ -6,10 +6,10 @@ import Sortie from "../model/sortie.model.js";
 
 const getAnalytics = async function() {
     try {
-        const [ users, articles, sortie, entree ] = await Promise.all([
+        const [ users, articles, entree, sortie ] = await Promise.all([
             User.countDocuments(),
             Article.countDocuments(),
-            History.find({ type:"Sortie" }).countDocuments(),
+            History.find({ type:"Entree" }).countDocuments(),
             Sortie.countDocuments()
         ])
 
@@ -17,7 +17,7 @@ const getAnalytics = async function() {
             data:{ 
             users, 
             articles, 
-            histoires: { sortie, entree } 
+            histoires: { entree, sortie } 
         }};
     } catch (error) {
         serverLogger.error(`Èrreur:${error.message} dans ${error.message}`);

@@ -48,7 +48,7 @@ const getHistoryByType = async function(req, res) {
 
 const getSorties = async function(req, res) {
     try {
-        const sorties = await Sortie.find({});
+        const sorties = await Sortie.find().sort({ createdAt:-1 });
 
         if (!sorties) {
             return res.status(400).json({ success:false, message:"Couldn't get sorties" });
@@ -95,27 +95,33 @@ const deleteSortieHistory = async function(req, res) {
 
 const createSortie = async function(req, res) {
     try {
-        const { sorties, to:codeGrise } = req.body;
+        const { sorties, to } = req.body;
         if (!Array.isArray(sorties) && !sorties) {
             return res.status(400).json({ success:false, message:"Format Invalid or empty array" })
         }
-
-        if (!codeGrise) {
-            return res.status(200).json({ success:false, message:"Recipient is important" });
+        console.log(to);
+        if (!to) {
+            return res.status(404).json({ success:false, message:"Recipient is important" });
         }
 
-        const findTo = await School.findOne({ codeGrise });
+        const findTo = await School.findOne({ codeGrise:to });
         if (!findTo) {
             return res.status(400).json({ success:false, message:"School unregistered" });
         }
         
-        const newSortie = await Sortie.create({ articles:sorties, to });
+        const newSortie = await Sortie.create({ articles:sorties, to:findTo });
+
+        const findSchool = await School.findOne({ codeGrise:to });
+        findSchool.sorties.push(newSortie._id);
+        await findSchool.save();
+        
         sorties.forEach(async item => {
+
             const article = await Article.findById(item?.article?._id);
             article.quantite -= item?.quantite;
             await article.save(); 
         })
-
+        
         return res.status(201).json({ success:true, message:"Sortie enregistré", newSortie });
     } catch (error) {
         serverLogger.error(`Èrreur:${error.message} dans ${error.message}`);

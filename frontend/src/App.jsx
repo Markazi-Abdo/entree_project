@@ -12,6 +12,7 @@ const DashBoard = lazy(() => import("./pages/DashBoard/DashBoard"));
 const Acceuil = lazy(() => import("./components/Dashboard/Acceuil"));
 const Produits = lazy(() => import("./components/Dashboard/Produits"));
 const AnalyticsView = lazy(() => import("./components/Dashboard/Analytiques"));
+const Ecole = lazy(() => import("./components/Dashboard/Ecole"));
 
 export default function App() {
   const { isLoading, user, getProfile } = useAuthStore();
@@ -34,6 +35,7 @@ export default function App() {
                 <Path index element={<Acceuil />}></Path>
                 <Path path="produits" element={<Produits />}></Path>
                 <Path path="analytiques" element={<AnalyticsView />}></Path>
+                <Path path="ecole" element={<Ecole />}></Path>
             </Path>
           </Paths>
         </Suspense>

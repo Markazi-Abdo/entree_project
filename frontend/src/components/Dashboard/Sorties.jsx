@@ -17,7 +17,7 @@ export default function Sorties() {
   if (isLoading) {
     return <LucideLoaderCircle className='animate-spin'/>
   }
-
+  
   const nextButton = () => {
     setCurrentIndex((prevIndex) => prevIndex + viewPerPage);
   }
@@ -53,7 +53,7 @@ export default function Sorties() {
                     articles={item?.articles}
                     quantite={item?.quantite}
                     createdAt={item?.createdAt}
-                    to={item.to}
+                    to={item?.to}
                   />
           })
         }

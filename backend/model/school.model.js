@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 const schoolSchema = new mongoose.Schema({
     nom:{
@@ -22,8 +22,12 @@ const schoolSchema = new mongoose.Schema({
     type:{
         type:String,
         enum:["Prive", "Public"],
-    }
-})
+    },
+    sorties:[{
+        type:mongoose.Types.ObjectId,
+        ref:"Sortie"
+    }]
+}, { timestamps:true })
 
 const School = mongoose.model("School", schoolSchema);
 export default School;

@@ -16,6 +16,7 @@ import analytics from "../routes/analytics.routes.js";
 import { Server } from "socket.io";
 import http from "http";
 import fs from "fs";
+import schoolRoutes from "../routes/school.routes.js";
 dotenv.config();
 
 const app = express();
@@ -39,6 +40,7 @@ app.use("/niyaba/auth", auth);
 app.use("/niyaba/articles", articles);
 app.use("/niyaba/history", histRoutes);
 app.use("/niyaba/analytics", analytics);
+app.use("/niyaba/school", schoolRoutes);
 
 export const serverNamespace = telekenisis.of("/niyaba");
 const connectedUsers = {};
